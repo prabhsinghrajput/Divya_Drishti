@@ -1,0 +1,9 @@
+flask
+flask-cors
+opencv-python
+torch
+ultralytics
+pytesseract
+pyttsx3
+SpeechRecognition
+numpy

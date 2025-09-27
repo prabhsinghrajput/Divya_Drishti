@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>OCR Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #121212;
+            color: #eee;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1 {
+            margin-bottom: 20px;
+            color: #00ffcc;
+        }
+        
+        .video-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .video-container div {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        .controls button {
+            margin: 10px;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #333;
+            color: #fff;
+            transition: background 0.3s;
+        }
+        
+        .controls button:hover {
+            background: #00ffcc;
+            color: #000;
+        }
+        
+        #processedImage {
+            margin-top: 20px;
+            max-width: 640px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        #text-output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+        }
+        
+        #ocrText {
+            font-size: 18px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📷 OCR Capture Interface</h1>
+
+    <div class="video-container">
+        <div>
+            <h2>Live Camera</h2>
+            <img src="{{ url_for('raw_feed') }}" width="640" height="480">
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="captureOCR()">📸 Capture & Run OCR</button>
+    </div>
+
+    <div>
+        <h2>Processed (B/W)</h2>
+        <img id="processedImage" />
+    </div>
+
+    <div id="text-output">
+        <h2>Recognized Text:</h2>
+        <p id="ocrText">[Nothing yet]</p>
+    </div>
+
+    <script>
+        async function captureOCR() {
+            let res = await fetch("/capture_ocr");
+            let data = await res.json();
+
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            // Show processed image
+            document.getElementById("processedImage").src = "data:image/jpeg;base64," + data.image;
+            document.getElementById("processedImage").style.display = "block";
+
+            // Show text
+            document.getElementById("ocrText").innerText = data.text || "[No text detected]";
+        }
+    </script>
+</body>
+
+</html>
